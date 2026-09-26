@@ -10,6 +10,7 @@
         .phone-container { width: 100%; max-width: 430px; height: 100%; background-color: #000; position: relative; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
         @media (min-width: 432px) { .phone-container { height: 880px; border-radius: 40px; border: 8px solid #333; } }
 
+        /* 聯絡人清單畫面 */
         #contacts-view { display: flex; flex-direction: column; height: 100%; padding: 20px 16px; background: #000; }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .header-title { font-size: 34px; font-weight: bold; }
@@ -27,6 +28,7 @@
         .nav-btn { display: flex; flex-direction: column; align-items: center; color: #34c759; font-size: 12px; gap: 4px; cursor: pointer; }
         .nav-btn.inactive { color: #8e8e93; }
 
+        /* 來電畫面 */
         #incoming-view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #111; display: none; flex-direction: column; justify-content: space-between; padding: 50px 20px 40px 20px; z-index: 10; }
         .caller-info { text-align: center; margin-top: 40px; }
         .caller-avatar-large { width: 100px; height: 100px; border-radius: 50%; overflow: hidden; margin: 0 auto 20px auto; border: 3px solid rgba(255,255,255,0.2); }
@@ -39,6 +41,7 @@
         .btn-decline { background-color: #ff3b30; }
         .btn-accept { background-color: #34c759; }
 
+        /* 視訊通話畫面 */
         #video-view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none; flex-direction: column; justify-content: space-between; z-index: 20; }
         #call-video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
         .video-top-bar { position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: center; padding: 50px 20px 20px 20px; background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent); }
@@ -56,6 +59,7 @@
 <body>
 
 <div class="phone-container">
+    <!-- 1. 聯絡人清單介面 -->
     <div id="contacts-view">
         <div>
             <div class="header-top">
@@ -74,9 +78,10 @@
             <div class="contact-item" style="opacity: 0.5;"><div class="avatar" style="background:#34c759;">リ</div><div class="contact-name">リク</div></div>
             <div class="contact-item" style="opacity: 0.5;"><div class="avatar" style="background:#34c759;">ユ</div><div class="contact-name">ユウシ</div></div>
             
+            <!-- 軟軟 -->
             <div class="contact-item" onclick="triggerIncomingCall()">
                 <div class="avatar">
-                    <img src="image_3.png" alt="軟軟">
+                    <img src="IMG_9211.JPG" alt="軟軟">
                 </div>
                 <div class="contact-name" style="color: #34c759; font-weight: bold;">軟軟</div>
             </div>
@@ -88,10 +93,11 @@
         </div>
     </div>
 
+    <!-- 2. 來電響鈴畫面 -->
     <div id="incoming-view">
         <div class="caller-info">
             <div class="caller-avatar-large">
-                <img src="image_3.png" alt="軟軟">
+                <img src="IMG_9211.JPG" alt="軟軟">
             </div>
             <div class="caller-name">軟軟</div>
             <div class="caller-status">WhatsApp 視訊通話...</div>
@@ -102,8 +108,9 @@
         </div>
     </div>
 
+    <!-- 3. 視訊通話與影片播放畫面 -->
     <div id="video-view">
-        <video id="call-video" src="video.mp4" playsinline webkit-playsinline></video>
+        <video id="call-video" src="IMG_9020.MOV" playsinline webkit-playsinline></video>
         
         <div class="video-top-bar">
             <div class="video-name">📹 軟軟</div>
