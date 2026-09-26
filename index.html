@@ -107,7 +107,7 @@
 
     <div id="video-view">
         <div class="video-container-iframe">
-            <iframe id="streamable-iframe" src="https://streamable.com/e/jdfh8n?autoplay=1&muted=0&controls=0" allow="autoplay"></iframe>
+            <iframe id="streamable-iframe" src="" allow="autoplay"></iframe>
         </div>
         
         <div class="video-top-bar">
@@ -148,7 +148,8 @@
         document.getElementById('incoming-view').style.display = 'none';
         document.getElementById('video-view').style.display = 'flex';
         
-        iframeElement.src = iframeElement.src;
+        // 點擊接聽的瞬間才載入影片，強制觸發播放
+        iframeElement.src = "https://streamable.com/e/jdfh8n?autoplay=1&muted=0&controls=0";
 
         seconds = 0;
         clearInterval(timerInterval);
@@ -165,7 +166,6 @@
         clearInterval(timerInterval);
         document.getElementById('video-view').style.display = 'none';
         document.getElementById('incoming-view').style.display = 'none';
-        iframeElement.src = "https://streamable.com/e/jdfh8n?autoplay=1&muted=0&controls=0";
     }
 </script>
 
