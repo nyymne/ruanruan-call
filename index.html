@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>聯絡先</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: #0d1117; color: #fff; height: 100vh; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+        .phone-container { width: 100%; max-width: 430px; height: 100%; background-color: #000; position: relative; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
+        @media (min-width: 432px) { .phone-container { height: 880px; border-radius: 40px; border: 8px solid #333; } }
+
+        #contacts-view { display: flex; flex-direction: column; height: 100%; padding: 20px 16px; background: #000; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .header-title { font-size: 34px; font-weight: bold; }
+        .lang-options { color: #888; font-size: 14px; display: flex; gap: 12px; }
+        .search-bar { background: #1c1c1e; border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; margin-bottom: 20px; color: #8e8e93; }
+        .search-bar input { background: transparent; border: none; color: #fff; font-size: 16px; width: 100%; outline: none; }
+        
+        .contact-list { flex-grow: 1; overflow-y: auto; }
+        .contact-item { display: flex; align-items: center; padding: 12px 0; border-bottom: 0.5px solid #2c2c2e; cursor: pointer; }
+        .avatar { width: 44px; height: 44px; border-radius: 50%; overflow: hidden; margin-right: 14px; background: #333; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .contact-name { font-size: 17px; font-weight: 500; }
+        
+        .bottom-nav { background: #1c1c1e; border-radius: 30px; padding: 12px 24px; display: flex; justify-content: space-around; align-items: center; margin-bottom: 10px; }
+        .nav-btn { display: flex; flex-direction: column; align-items: center; color: #34c759; font-size: 12px; gap: 4px; cursor: pointer; }
+        .nav-btn.inactive { color: #8e8e93; }
+
+        #incoming-view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #111; display: none; flex-direction: column; justify-content: space-between; padding: 50px 20px 40px 20px; z-index: 10; }
+        .caller-info { text-align: center; margin-top: 40px; }
+        .caller-avatar-large { width: 100px; height: 100px; border-radius: 50%; overflow: hidden; margin: 0 auto 20px auto; border: 3px solid rgba(255,255,255,0.2); }
+        .caller-avatar-large img { width: 100%; height: 100%; object-fit: cover; }
+        .caller-name { font-size: 28px; font-weight: bold; margin-bottom: 8px; }
+        .caller-status { font-size: 16px; color: #aaa; }
+
+        .incoming-actions { display: flex; justify-content: space-around; width: 100%; padding: 0 30px; margin-bottom: 30px; }
+        .action-btn { width: 70px; height: 70px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 28px; cursor: pointer; border: none; color: #fff; }
+        .btn-decline { background-color: #ff3b30; }
+        .btn-accept { background-color: #34c759; }
+
+        #video-view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none; flex-direction: column; justify-content: space-between; z-index: 20; }
+        #call-video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+        .video-top-bar { position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: center; padding: 50px 20px 20px 20px; background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent); }
+        .video-name { font-size: 16px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
+        
+        .video-bottom-controls { position: relative; z-index: 2; padding: 20px 30px 40px 30px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); display: flex; flex-direction: column; gap: 20px; }
+        .control-buttons { display: flex; justify-content: space-between; align-items: center; background: rgba(50,50,50,0.6); backdrop-filter: blur(10px); border-radius: 35px; padding: 12px 24px; }
+        .ctrl-icon { color: #fff; font-size: 20px; background: transparent; border: none; cursor: pointer; }
+        .btn-hangup { width: 60px; height: 60px; background-color: #ff3b30; border-radius: 50%; border: none; display: flex; justify-content: center; align-items: center; font-size: 24px; color: #fff; cursor: pointer; }
+        
+        .chat-input-bar { display: flex; align-items: center; background: rgba(30,30,30,0.7); backdrop-filter: blur(10px); border-radius: 25px; padding: 10px 16px; justify-content: space-between; }
+        .chat-input-bar span { color: #aaa; font-size: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="phone-container">
+    <div id="contacts-view">
+        <div>
+            <div class="header-top">
+                <div class="header-title">連絡先</div>
+                <div class="lang-options"><span>한국어</span><span>日本語</span></div>
+            </div>
+            <div class="search-bar">
+                <span>🔍</span>
+                <input type="text" placeholder="検索" readonly>
+            </div>
+        </div>
+        
+        <div class="contact-list">
+            <div class="contact-item" style="opacity: 0.5;"><div class="avatar" style="background:#34c759;">自分</div><div class="contact-name">プロフィール</div></div>
+            <div class="contact-item" style="opacity: 0.5;"><div class="avatar" style="background:#34c759;">シ</div><div class="contact-name">シオン</div></div>
+            <div class="contact-item" style="opacity: 0.5;"><div class="avatar" style="background:#34c759;">リ</div><div class="contact-name">リク</div></div>
+            <div class="contact-item" style="opacity: 0.5;"><div class="avatar" style="background:#34c759;">ユ</div><div class="contact-name">ユウシ</div></div>
+            
+            <div class="contact-item" onclick="triggerIncomingCall()">
+                <div class="avatar">
+                    <img src="image_3.png" alt="軟軟">
+                </div>
+                <div class="contact-name" style="color: #34c759; font-weight: bold;">軟軟</div>
+            </div>
+        </div>
+
+        <div class="bottom-nav">
+            <div class="nav-btn">📞 <span>連絡先</span></div>
+            <div class="nav-btn inactive">❌ <span>不在着信</span></div>
+        </div>
+    </div>
+
+    <div id="incoming-view">
+        <div class="caller-info">
+            <div class="caller-avatar-large">
+                <img src="image_3.png" alt="軟軟">
+            </div>
+            <div class="caller-name">軟軟</div>
+            <div class="caller-status">WhatsApp 視訊通話...</div>
+        </div>
+        <div class="incoming-actions">
+            <button class="action-btn btn-decline" onclick="rejectCall()">✕</button>
+            <button class="action-btn btn-accept" onclick="acceptCall()">📞</button>
+        </div>
+    </div>
+
+    <div id="video-view">
+        <video id="call-video" src="video.mp4" playsinline webkit-playsinline></video>
+        
+        <div class="video-top-bar">
+            <div class="video-name">📹 軟軟</div>
+            <div id="call-timer" style="font-size: 14px; background: rgba(0,0,0,0.4); padding: 4px 10px; border-radius: 12px;">00:00</div>
+        </div>
+
+        <div class="video-bottom-controls">
+            <div class="control-buttons">
+                <button class="ctrl-icon">📇</button>
+                <button class="ctrl-icon">🔈</button>
+                <button class="btn-hangup" onclick="hangUp()">📞</button>
+                <button class="ctrl-icon">📷</button>
+                <button class="ctrl-icon">🎙️</button>
+            </div>
+            <div class="chat-input-bar">
+                <span>傳送訊息......</span>
+                <span>❤️</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let timerInterval;
+    let seconds = 0;
+    const videoElement = document.getElementById('call-video');
+
+    function triggerIncomingCall() {
+        document.getElementById('incoming-view').style.display = 'flex';
+    }
+
+    function rejectCall() {
+        document.getElementById('incoming-view').style.display = 'none';
+    }
+
+    function acceptCall() {
+        document.getElementById('incoming-view').style.display = 'none';
+        document.getElementById('video-view').style.display = 'flex';
+        
+        videoElement.currentTime = 0;
+        videoElement.play().catch(e => console.log("自動播放被阻擋", e));
+
+        seconds = 0;
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            seconds++;
+            let m = String(Math.floor(seconds / 60)).padStart(2, '0');
+            let s = String(seconds % 60).padStart(2, '0');
+            document.getElementById('call-timer').innerText = `${m}:${s}`;
+        }, 1000);
+    }
+
+    function hangUp() {
+        videoElement.pause();
+        clearInterval(timerInterval);
+        document.getElementById('video-view').style.display = 'none';
+        document.getElementById('incoming-view').style.display = 'none';
+    }
+
+    videoElement.addEventListener('ended', () => {
+        hangUp();
+    });
+</script>
+
+</body>
+</html>
