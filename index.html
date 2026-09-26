@@ -40,7 +40,10 @@
         .btn-accept { background-color: #34c759; }
 
         #video-view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none; flex-direction: column; justify-content: space-between; z-index: 20; }
-        #call-video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+        
+        .video-container-iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; overflow: hidden; background: #000; }
+        .video-container-iframe iframe { width: 100%; height: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(1.35); border: none; }
+
         .video-top-bar { position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: center; padding: 50px 20px 20px 20px; background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent); }
         .video-name { font-size: 16px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
         
@@ -103,7 +106,9 @@
     </div>
 
     <div id="video-view">
-        <video id="call-video" src="https://docs.google.com/uc?export=download&id=10wyf9DaUhmn5wkF_jm_anPbnWlgwuzYV" playsinline webkit-playsinline></video>
+        <div class="video-container-iframe">
+            <iframe id="streamable-iframe" src="https://streamable.com/e/jdfh8n?autoplay=1&muted=0&controls=0" allow="autoplay"></iframe>
+        </div>
         
         <div class="video-top-bar">
             <div class="video-name">📹 軟軟</div>
@@ -129,7 +134,7 @@
 <script>
     let timerInterval;
     let seconds = 0;
-    const videoElement = document.getElementById('call-video');
+    const iframeElement = document.getElementById('streamable-iframe');
 
     function triggerIncomingCall() {
         document.getElementById('incoming-view').style.display = 'flex';
@@ -143,8 +148,7 @@
         document.getElementById('incoming-view').style.display = 'none';
         document.getElementById('video-view').style.display = 'flex';
         
-        videoElement.currentTime = 0;
-        videoElement.play().catch(e => console.log("自動播放被阻擋", e));
+        iframeElement.src = iframeElement.src;
 
         seconds = 0;
         clearInterval(timerInterval);
@@ -157,15 +161,12 @@
     }
 
     function hangUp() {
-        videoElement.pause();
+        iframeElement.src = "";
         clearInterval(timerInterval);
         document.getElementById('video-view').style.display = 'none';
         document.getElementById('incoming-view').style.display = 'none';
+        iframeElement.src = "https://streamable.com/e/jdfh8n?autoplay=1&muted=0&controls=0";
     }
-
-    videoElement.addEventListener('ended', () => {
-        hangUp();
-    });
 </script>
 
 </body>
